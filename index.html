@@ -100,6 +100,12 @@
       border-color: var(--primary);
     }
 
+    .date-row {
+      display: grid;
+      grid-template-columns: 1.4fr 0.6fr;
+      gap: 12px;
+    }
+
     button {
       cursor: pointer;
       border: 0;
@@ -315,7 +321,7 @@
     </main>
 
     <footer>
-      Feito para GitHub Pages. Edite a lista de datas no JavaScript caso o calendário mude.
+      Feito para GitHub Pages. O ano fica fixo em 2026; edite a lista de datas no JavaScript caso o calendário mude.
     </footer>
   </div>
 
@@ -365,12 +371,19 @@
     const explanationText = document.getElementById("explanationText");
     const monthlyTable = document.getElementById("monthlyTable");
 
-    function getTodayLocalISO() {
+    function getTodayLocalParts() {
       const today = new Date();
-      const year = today.getFullYear();
       const month = String(today.getMonth() + 1).padStart(2, "0");
       const day = String(today.getDate()).padStart(2, "0");
-      return `${year}-${month}-${day}`;
+      return { month, day };
+    }
+
+    function getDaysInMonth2026(month) {
+      return new Date(2026, Number(month), 0).getDate();
+    }
+
+    function buildSelectedDate() {
+      return `2026-${monthInput.value}-${dayInput.value}`;
     }
 
     function formatDateBR(dateString) {
@@ -431,7 +444,7 @@
     }
 
     function calculate() {
-      const selectedDate = dateInput.value;
+      const selectedDate = buildSelectedDate();
       const hoursPerDay = DEFAULT_HOURS_PER_DAY;
       const mode = "including";
 
