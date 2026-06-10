@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calculadora de Carga Horária Escolar 2026</title>
+  <style>
+    :root {
+      --bg: #eef5ff;
+      --card: #ffffff;
+      --text: #172033;
+      --muted: #627086;
+      --primary: #2367d1;
+      --primary-dark: #174b9c;
+      --ok: #168a4a;
+      --warn: #b76800;
+      --border: #d9e4f5;
+      --shadow: 0 16px 40px rgba(15, 40, 90, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: radial-gradient(circle at top, #ffffff 0%, var(--bg) 45%, #dceaff 100%);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 24px;
+    }
+
+    .container {
+      max-width: 1080px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin: 18px 0 24px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      letter-spacing: -1px;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      margin-top: 10px;
+      font-size: 1.05rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 18px;
+    }
+
+    @media (min-width: 850px) {
+      .grid {
+        grid-template-columns: 1.05fr 0.95fr;
+      }
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 22px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(6px);
+    }
+
+    .controls {
+      display: grid;
+      gap: 16px;
+    }
+
+    label {
+      display: block;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    input, select, button {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 13px 14px;
+      font-size: 1rem;
+      background: white;
+      color: var(--text);
+    }
+
+    input:focus, select:focus {
+      outline: 3px solid rgba(35, 103, 209, 0.18);
+      border-color: var(--primary);
+    }
+
+    button {
+      cursor: pointer;
+      border: 0;
+      background: var(--primary);
+      color: white;
+      font-weight: 800;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+    }
+    .result {
+      margin-top: 18px;
+      padding: 18px;
+      border-radius: 18px;
+      background: #f6f9ff;
+      border: 1px dashed #b9c9e8;
+    }
+
+    .result h2 {
+      margin: 0 0 10px;
+      font-size: 1.4rem;
+    }
+
+    .big-number {
+      font-size: clamp(2.2rem, 7vw, 4.2rem);
+      font-weight: 900;
+      line-height: 1;
+      color: var(--primary);
+      margin: 10px 0;
+    }
+
+    .status {
+      display: inline-block;
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .status.ok {
+      color: var(--ok);
+      background: #e7f8ee;
+    }
+
+    .status.warn {
+      color: var(--warn);
+      background: #fff4df;
+    }
+
+    .mini-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    @media (min-width: 600px) {
+      .mini-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    .metric {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 13px;
+    }
+
+    .metric span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.85rem;
+      margin-bottom: 6px;
+    }
+
+    .metric strong {
+      font-size: 1.2rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 16px;
+      background: white;
+    }
+
+    th, td {
+      padding: 12px 10px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+    }
+
+    th {
+      background: #f1f6ff;
+      color: #30425f;
+      font-size: 0.9rem;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .total-row {
+      font-weight: 900;
+      background: #f7fbff;
+    }
+
+    .note {
+      color: var(--muted);
+      font-size: 0.92rem;
+      margin-top: 14px;
+      line-height: 1.45;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: #eaf2ff;
+      color: #173e80;
+      border: 1px solid #cfe0ff;
+      padding: 8px 11px;
+      border-radius: 999px;
+      font-weight: 800;
+      margin-top: 12px;
+    }
+
+    footer {
+      text-align: center;
+      color: var(--muted);
+      margin-top: 22px;
+      font-size: 0.9rem;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Calculadora de Carga Horária Escolar 2026</h1>
+      <p class="subtitle">Calendário Escolar de Formosa-GO, Escolas Urbanas. Dia letivo × horas por dia = carga acumulada.</p>
+      <div class="badge">📚 Total padrão: 200 dias letivos = 800 horas</div>
+    </header>
+
+    <main class="grid">
+      <section class="card">
+        <h2>Calcular carga horária acumulada</h2>
+
+        <div class="controls">
+          <div>
+            <label for="dateInput">Escolha a data</label>
+            <input type="date" id="dateInput" min="2026-01-01" max="2026-12-31" />
+          </div>          <button id="calculateButton">Calcular</button>
+        </div>
+
+        <div class="result" id="resultBox">
+          <span class="status ok" id="statusLabel">Dia letivo</span>
+          <h2 id="resultTitle">Até 05/05/2026</h2>
+          <div class="big-number" id="hoursResult">284h</div>
+
+          <div class="mini-grid">
+            <div class="metric">
+              <span>Dias letivos</span>
+              <strong id="daysResult">71</strong>
+            </div>
+
+            <div class="metric">
+              <span>Horas por dia</span>
+              <strong id="hoursPerDayResult">4h</strong>
+            </div>
+
+            <div class="metric">
+              <span>Dia escolhido</span>
+              <strong id="selectedDayResult">4h</strong>
+            </div>
+
+            <div class="metric">
+              <span>Restante</span>
+              <strong id="remainingResult">516h</strong>
+            </div>
+          </div>
+
+          <p class="note" id="explanationText">
+            Até 05/05/2026 são 71 dias letivos acumulados. Como cada dia vale 4h, o total é 284h.
+          </p>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Resumo por mês</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Mês</th>
+              <th>Dias</th>
+              <th>Horas</th>
+            </tr>
+          </thead>
+          <tbody id="monthlyTable"></tbody>
+        </table>
+        <p class="note">
+          Resumo automático da carga horária mensal. Perfeito para não virar escravo de continha manual. 🧮
+        </p>
+      </section>
+    </main>
+
+    <footer>
+      Feito para GitHub Pages. Edite a lista de datas no JavaScript caso o calendário mude.
+    </footer>
+  </div>
+
+  <script>
+    const schoolDays = [
+      "2026-01-16", "2026-01-19", "2026-01-20", "2026-01-21", "2026-01-22", "2026-01-23", "2026-01-26", "2026-01-27", "2026-01-28", "2026-01-29", "2026-01-30",
+
+      "2026-02-02", "2026-02-03", "2026-02-04", "2026-02-05", "2026-02-06", "2026-02-09", "2026-02-10", "2026-02-11", "2026-02-12", "2026-02-13", "2026-02-19", "2026-02-20", "2026-02-23", "2026-02-24", "2026-02-25", "2026-02-26", "2026-02-27",
+
+      "2026-03-02", "2026-03-03", "2026-03-04", "2026-03-05", "2026-03-06", "2026-03-09", "2026-03-10", "2026-03-11", "2026-03-12", "2026-03-13", "2026-03-16", "2026-03-17", "2026-03-18", "2026-03-19", "2026-03-20", "2026-03-23", "2026-03-24", "2026-03-25", "2026-03-26", "2026-03-27", "2026-03-30", "2026-03-31",
+
+      "2026-04-01", "2026-04-06", "2026-04-07", "2026-04-08", "2026-04-09", "2026-04-10", "2026-04-13", "2026-04-14", "2026-04-15", "2026-04-16", "2026-04-17", "2026-04-20", "2026-04-22", "2026-04-23", "2026-04-24", "2026-04-27", "2026-04-28", "2026-04-29", "2026-04-30",
+
+      "2026-05-04", "2026-05-05", "2026-05-06", "2026-05-07", "2026-05-08", "2026-05-11", "2026-05-12", "2026-05-13", "2026-05-14", "2026-05-15", "2026-05-18", "2026-05-19", "2026-05-20", "2026-05-21", "2026-05-22", "2026-05-25", "2026-05-26", "2026-05-27", "2026-05-28", "2026-05-29",
+
+      "2026-06-01", "2026-06-02", "2026-06-03", "2026-06-08", "2026-06-09", "2026-06-10", "2026-06-11", "2026-06-12", "2026-06-15", "2026-06-16", "2026-06-17", "2026-06-18", "2026-06-19", "2026-06-22", "2026-06-23", "2026-06-24", "2026-06-25", "2026-06-26", "2026-06-29", "2026-06-30",
+
+      "2026-08-03", "2026-08-04", "2026-08-05", "2026-08-06", "2026-08-07", "2026-08-10", "2026-08-11", "2026-08-12", "2026-08-13", "2026-08-14", "2026-08-17", "2026-08-18", "2026-08-19", "2026-08-20", "2026-08-21", "2026-08-24", "2026-08-25", "2026-08-26", "2026-08-27", "2026-08-28", "2026-08-31",
+
+      "2026-09-01", "2026-09-02", "2026-09-03", "2026-09-04", "2026-09-08", "2026-09-09", "2026-09-10", "2026-09-11", "2026-09-14", "2026-09-15", "2026-09-16", "2026-09-17", "2026-09-18", "2026-09-21", "2026-09-22", "2026-09-23", "2026-09-24", "2026-09-25", "2026-09-28", "2026-09-29", "2026-09-30",
+
+      "2026-10-01", "2026-10-02", "2026-10-05", "2026-10-06", "2026-10-07", "2026-10-08", "2026-10-09", "2026-10-19", "2026-10-20", "2026-10-21", "2026-10-22", "2026-10-23", "2026-10-26", "2026-10-27", "2026-10-29", "2026-10-30",
+
+      "2026-11-03", "2026-11-04", "2026-11-05", "2026-11-06", "2026-11-09", "2026-11-10", "2026-11-11", "2026-11-12", "2026-11-13", "2026-11-16", "2026-11-17", "2026-11-18", "2026-11-19", "2026-11-23", "2026-11-24", "2026-11-25", "2026-11-26", "2026-11-27",
+
+      "2026-12-01", "2026-12-02", "2026-12-03", "2026-12-04", "2026-12-07", "2026-12-09", "2026-12-10", "2026-12-11", "2026-12-14", "2026-12-15", "2026-12-16", "2026-12-17", "2026-12-18", "2026-12-21", "2026-12-22"
+    ];
+
+    const schoolDaySet = new Set(schoolDays);
+
+    const monthNames = [
+      "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+      "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+    ];
+
+    const dateInput = document.getElementById("dateInput");
+    const DEFAULT_HOURS_PER_DAY = 4;
+    const calculateButton = document.getElementById("calculateButton");
+
+    const statusLabel = document.getElementById("statusLabel");
+    const resultTitle = document.getElementById("resultTitle");
+    const hoursResult = document.getElementById("hoursResult");
+    const daysResult = document.getElementById("daysResult");
+    const hoursPerDayResult = document.getElementById("hoursPerDayResult");
+    const selectedDayResult = document.getElementById("selectedDayResult");
+    const remainingResult = document.getElementById("remainingResult");
+    const explanationText = document.getElementById("explanationText");
+    const monthlyTable = document.getElementById("monthlyTable");
+
+    function getTodayLocalISO() {
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, "0");
+      const day = String(today.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    }
+
+    function formatDateBR(dateString) {
+      const [year, month, day] = dateString.split("-");
+      return `${day}/${month}/${year}`;
+    }
+
+    function formatHours(value) {
+      return Number.isInteger(value) ? `${value}h` : `${value.toFixed(1).replace(".", ",")}h`;
+    }
+
+    function getMonthNumber(dateString) {
+      return Number(dateString.slice(5, 7));
+    }
+
+    function countDaysByMode(selectedDate, mode) {
+      if (mode === "only") {
+        return schoolDaySet.has(selectedDate) ? 1 : 0;
+      }
+
+      return schoolDays.filter(day => {
+        if (mode === "before") return day < selectedDate;
+        return day <= selectedDate;
+      }).length;
+    }
+
+    function renderMonthlyTable(hoursPerDay) {
+      monthlyTable.innerHTML = "";
+
+      let totalDays = 0;
+      let totalHours = 0;
+
+      monthNames.forEach((monthName, index) => {
+        const month = index + 1;
+        const days = schoolDays.filter(day => getMonthNumber(day) === month).length;
+        const hours = days * hoursPerDay;
+
+        totalDays += days;
+        totalHours += hours;
+
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${monthName}</td>
+          <td>${days}</td>
+          <td>${formatHours(hours)}</td>
+        `;
+        monthlyTable.appendChild(row);
+      });
+
+      const totalRow = document.createElement("tr");
+      totalRow.className = "total-row";
+      totalRow.innerHTML = `
+        <td>Total</td>
+        <td>${totalDays}</td>
+        <td>${formatHours(totalHours)}</td>
+      `;
+      monthlyTable.appendChild(totalRow);
+    }
+
+    function calculate() {
+      const selectedDate = dateInput.value;
+      const hoursPerDay = DEFAULT_HOURS_PER_DAY;
+      const mode = "including";
+
+      if (!selectedDate) return;
+
+      const isSchoolDay = schoolDaySet.has(selectedDate);
+      const countedDays = countDaysByMode(selectedDate, mode);
+      const totalHours = countedDays * hoursPerDay;
+      const selectedDayHours = isSchoolDay ? hoursPerDay : 0;
+      const annualTotalHours = schoolDays.length * hoursPerDay;
+      const remainingHours = Math.max(annualTotalHours - totalHours, 0);
+
+      statusLabel.textContent = isSchoolDay ? "Dia letivo" : "Não é dia letivo";
+      statusLabel.className = isSchoolDay ? "status ok" : "status warn";
+
+      if (mode === "only") {
+        resultTitle.textContent = `Somente em ${formatDateBR(selectedDate)}`;
+      } else if (mode === "before") {
+        resultTitle.textContent = `Antes de ${formatDateBR(selectedDate)}`;
+      } else {
+        resultTitle.textContent = `Até ${formatDateBR(selectedDate)}`;
+      }
+
+      hoursResult.textContent = formatHours(totalHours);
+      daysResult.textContent = countedDays;
+      hoursPerDayResult.textContent = formatHours(hoursPerDay);
+      selectedDayResult.textContent = formatHours(selectedDayHours);
+      remainingResult.textContent = formatHours(remainingHours);
+
+      if (mode === "only") {
+        explanationText.textContent = isSchoolDay
+          ? `${formatDateBR(selectedDate)} é dia letivo. Então esse dia vale ${formatHours(hoursPerDay)}.`
+          : `${formatDateBR(selectedDate)} não está na lista de dias letivos. Então esse dia vale 0h.`;
+      } else if (mode === "before") {
+        explanationText.textContent = `Antes de ${formatDateBR(selectedDate)} são ${countedDays} dias letivos. Com ${formatHours(hoursPerDay)} por dia, o total é ${formatHours(totalHours)}.`;
+      } else {
+        explanationText.textContent = `Até ${formatDateBR(selectedDate)} são ${countedDays} dias letivos acumulados. Com ${formatHours(hoursPerDay)} por dia, o total é ${formatHours(totalHours)}.`;
+      }
+
+      renderMonthlyTable(hoursPerDay);
+    }
+
+    function setInitialDateToToday() {
+      const today = getTodayLocalISO();
+      const minDate = dateInput.min;
+      const maxDate = dateInput.max;
+
+      if (today < minDate) {
+        dateInput.value = minDate;
+      } else if (today > maxDate) {
+        dateInput.value = maxDate;
+      } else {
+        dateInput.value = today;
+      }
+    }
+
+    calculateButton.addEventListener("click", calculate);
+    dateInput.addEventListener("change", calculate);    setInitialDateToToday();
+    calculate();
+  </script>
+</body>
+</html>
